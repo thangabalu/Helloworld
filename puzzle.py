@@ -28,6 +28,7 @@ def read_urls(logname):
     for path in sorted(paths):
         if 'puzzle' in path:
             urls.append(full_host+path)
+    print nothing # Added for testing
     return urls           
 
 def main():
