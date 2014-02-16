@@ -29,6 +29,7 @@ def read_urls(logname):
     for path in sorted(paths):
         if 'puzzle' in path:
             urls.append(full_host+path)
+<<<<<<< HEAD
     return urls
 
 def download_images(urls):
@@ -45,6 +46,10 @@ def download_images(urls):
     index_file.write('</body></html>')    
     index_file.close()
         
+=======
+    print nothing # Added for testing
+    return urls           
+>>>>>>> bdae38af9ca7ba206065e297a73e2b2d2f90c119
 
 def main():
     print 'usage: [--todir dir] logfile '
