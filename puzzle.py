@@ -11,6 +11,7 @@ import re
 import os
 import shutil
 import commands
+import urllib
 
 """Copy Special exercise
 """
@@ -28,7 +29,22 @@ def read_urls(logname):
     for path in sorted(paths):
         if 'puzzle' in path:
             urls.append(full_host+path)
-    return urls           
+    return urls
+
+def download_images(urls):
+    print 'downloading images'
+    i = 0
+    index_file = open('index.html', 'w')
+    index_file.write('<html><body>')
+    for url in urls:
+        filename = 'image%s' %(i)
+        print 'Retrieving %s' %(url)
+        urllib.urlretrieve(url,filename)
+        index_file.write('<img src ="%s">' %(filename))
+        i += 1
+    index_file.write('</body></html>')    
+    index_file.close()
+        
 
 def main():
     print 'usage: [--todir dir] logfile '
@@ -52,10 +68,10 @@ def main():
             print 'creating directory'
             os.mkdir(absolute_directory_path)
             print 'created directory'
-        sys.exit(1)
-    for url in urls:
-        print url
-    
+        download_images(urls)
+    else:
+        for url in urls:
+            print url
   
 if __name__ == "__main__":
   main()
