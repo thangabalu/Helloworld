@@ -13,7 +13,7 @@ import shutil
 import commands
 import urllib
 
-"""Copy Special exercise
+"""Puzzle exercise
 """
 
 def read_urls(logname):
@@ -29,7 +29,6 @@ def read_urls(logname):
     for path in sorted(paths):
         if 'puzzle' in path:
             urls.append(full_host+path)
-<<<<<<< HEAD
     return urls
 
 def download_images(urls):
@@ -45,11 +44,7 @@ def download_images(urls):
         i += 1
     index_file.write('</body></html>')    
     index_file.close()
-        
-=======
-    print nothing # Added for testing
-    return urls           
->>>>>>> bdae38af9ca7ba206065e297a73e2b2d2f90c119
+    
 
 def main():
     print 'usage: [--todir dir] logfile '
@@ -64,15 +59,11 @@ def main():
         directory_path = arguments[todirectory_index+1]
         absolute_directory_path = os.path.abspath(directory_path)
         del(arguments[todirectory_index:todirectory_index+2])
-        print 'arguments after deletion - %s' %(arguments)
-        print 'Absolute directory path is %s' %(absolute_directory_path)
-    logname = arguments[0]
+        logname = arguments[0]
     urls = read_urls(logname)
     if todirectory == 'true':
         if not os.path.exists(absolute_directory_path):
-            print 'creating directory'
             os.mkdir(absolute_directory_path)
-            print 'created directory'
         download_images(urls)
     else:
         for url in urls:
