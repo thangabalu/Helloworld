@@ -27,10 +27,7 @@ def read_urls(inputurls):
         sourcecode = open("universitysourcecode.html", 'rU')
         sourcecode_contents = sourcecode.read()
     #Different way to avoid creating a html file
-    #htmlfile = urllib.urlopen("www.google.com")
-    #htmltext = htmlfile.read()
-    
-    #(or) htmlfile = urllib.urlopen("www.google.com").read()
+    #htmlfile = urllib.urlopen("www.google.com").read()
 
         #Extract the college name and the url
         Url_Title_tuple = re.findall('<h2 class=\"college_name\"><a href=(\"\S+) title=\"(.*)\" onClick',sourcecode_contents)
