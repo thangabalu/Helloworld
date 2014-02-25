@@ -18,6 +18,9 @@ Given an apache logfile, find the puzzle urls and download the images.
 
 Here's what a puzzle url looks like:
 10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
+
+I am adding this on 25 february 2014
+
 """
 
 #This function extracts the required path from the log file and create a complete puzzle urls which can be used in other function to retrieve images.
