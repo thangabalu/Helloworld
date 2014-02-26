@@ -8,6 +8,7 @@
 
 import sys
 import re
+import argparse
 
 """Baby Names exercise
 
@@ -65,36 +66,33 @@ def extract_names(filename):
 
 	return Year_name_rank_list
 
-
-
     
 def main():
 
-    if len(sys.argv) < 2 :
-        print 'usage: [--summaryfile] file [file ...]'
-        sys.exit(1)
-    filenames = sys.argv[1:]
-
-
+	parser = argparse.ArgumentParser(description = 'Given a input file, this program will extract the babynames and their ranks', prog ='Babynames')
+	parser.add_argument('--summaryfile', action='store_true',help = 'If this option is given, output will be written to file')
+	parser.add_argument('inputfiles', nargs= '+', help = 'Program will search and extract baby names from this file')
+	args = parser.parse_args()    
+	summary = False
     #Check if the summary flag is given in the input and remove it from the 'filenames' list.
-    summary = False	
-    if filenames[0] == '--summaryfile':
+	if args.summaryfile:
 		summary = True
-		del filenames[0]
+
+	filenames = args. inputfiles
 
     # Multiple filenames can be given in the command line arguments
     # Pass the filename to the function 'extract_names' and get the extracted list which have year, name and rank
     # If the summary flag is set, write the list to a file. If not, just print the list.
 
-    for filename in filenames:
-        Extracted_year_name_list = extract_names(filename)
-        if summary == True:
-            outfile = open(filename + '.summary', 'w')
-            for name_rank in Extracted_year_name_list:
-                outfile.write(name_rank + '\n')
-            outfile.close()
-        else:
-            print '\n'.join(Extracted_year_name_list)
+	for filename in filenames:
+		Extracted_year_name_list = extract_names(filename)
+		if summary == True:
+			outfile = open(filename + '.summary', 'w')
+			for name_rank in Extracted_year_name_list:
+				outfile.write(name_rank + '\n')
+			outfile.close()
+		else:
+			print '\n'.join(Extracted_year_name_list)
 
   
 if __name__ == '__main__':
