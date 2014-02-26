@@ -12,16 +12,13 @@ import os
 import shutil
 import commands
 import urllib
+import argparse
 
 """Puzzle exercise
 Given an apache logfile, find the puzzle urls and download the images.
 
 Here's what a puzzle url looks like:
 10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
-
-This is changed by suresh on 25 Feb 2014
-
-
 
 """
 
@@ -55,17 +52,18 @@ def read_urls(logname):
 # This function retrieves the images from the given puzzle Url's and write them in a html file.
 # Input argument - List of puzzle URL's
 # Return - nothing
-def download_images(urls):
-    print 'downloading images'
+def download_images(urls,directorypath):
     i = 0
-    
+    indexfile_path = os.path.join(directorypath,'index.html')
+
     # Open a html file
-    index_file = open('index.html', 'w')
+    index_file = open(indexfile_path,'w')
     index_file.write('<html><body>')
     for url in urls:
         filename = 'image%s' %(i)
+        filename_path = os.path.join(directorypath,filename)
         print 'Retrieving %s' %(url)
-        urllib.urlretrieve(url,filename)
+        urllib.urlretrieve(url,filename_path)
         index_file.write('<img src ="%s">' %(filename))
         i += 1
     index_file.write('</body></html>')    
@@ -73,32 +71,33 @@ def download_images(urls):
     
 
 def main():
-    #TODO - Command line arguments should be evaluated to check whether the needed input is given and any unnecessary input is given.
-    print 'usage: [--todir dir] logfile '
-    arguments = sys.argv[1:]
-    i=0
-    todirectory='false'
 
-    # if '--todir' is given in input, process the inputs to fetch the output folder name.
-    for argument in arguments:
-        if argument == '--todir':
-            todirectory = 'true'
-            todirectory_index = i
-    if todirectory == 'true':
-        directory_path = arguments[todirectory_index+1]
-        absolute_directory_path = os.path.abspath(directory_path)
-        del(arguments[todirectory_index:todirectory_index+2])
+    #usage:  Puzzle [-h] [--todir TODIR] logfile
+    #--todir---> optional arguments
+    #logfile ---> positional arguments(mandatory argument)
 
-    #Take the log file name and call the necessary functions according to '--todir' option is present or not
-    logname = arguments[0]
-    urls = read_urls(logname)
-    if todirectory == 'true':
-        if not os.path.exists(absolute_directory_path):
-            os.mkdir(absolute_directory_path)
-        download_images(urls)
-    else:
-        for url in urls:
-            print url
+	parser = argparse.ArgumentParser(description = 'Given an apache logfile, find the puzzle urls and download the images.', prog ='Puzzle')
+	parser.add_argument('--todir','--todirectory', help = 'Extracted Files will be copied to this directory')
+	parser.add_argument('logfile', help = 'The input log file where puzzle url will be searched')
+	args = parser.parse_args()    
+	print args.todir
+	print args.logfile
+
+	if args.todir:
+		absolute_directory_path = os.path.abspath(args.todir)
+
+	logfile_name = args.logfile
+
+    #Extract the url's from the given log file and download the images to a directory if --todir option is given
+	#Or just print the url's in the screen
+	urls = read_urls(logfile_name)
+	if args.todir:
+		if not os.path.exists(absolute_directory_path):
+			os.mkdir(absolute_directory_path)
+		download_images(urls,absolute_directory_path)
+	else:
+		for url in urls:
+			print url
   
 if __name__ == "__main__":
   main()
