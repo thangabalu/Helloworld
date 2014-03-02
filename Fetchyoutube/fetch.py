@@ -126,7 +126,7 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
 			if url not in dictionary.values():
 				dictionary[title] = url
 				url_list.append(url)
-		print 'Now the size of the list is %d and the search is ongoing' %len(dictionary)
+		print 'Now the size of the list is %d and the search is ongoing \r' %len(dictionary),
 
 
 	while (len(dictionary) < dictionary_length) and (url_already_dictionary < url_already_dictionary_size):
@@ -143,11 +143,11 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
                 
 				if not ignore_already_dictionary:
 					if url_already_dictionary > url_already_dictionary_size:
-						print 'The number of repetitive urls reached the limit. Stopping the search.'
+						print 'The number of repetitive urls reached the limit. Stopping the search'
 						break
 					
 				if len(dictionary) > dictionary_length:
-					print 'The required size is reached. Stopping the search.'
+					print 'The required size is reached. Stopping the search.................'
 					break
 					
 				if href in dictionary.values():
@@ -164,7 +164,7 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
 						dictionary[title] = href
 						url_temporary_list.append(href)
 			#Todo - Need to do something to fix this \r.
-			print 'Now the size of the list is %d and the search is ongoing' %len(dictionary)
+			print 'Now the size of the list is %d and the search is ongoing \r' %len(dictionary),
 			
 			if len(dictionary) > dictionary_length:
 				break
