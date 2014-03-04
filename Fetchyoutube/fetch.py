@@ -43,6 +43,7 @@ def print_in_prompt(dictionary):
 	maximum_length = find_maximum_length_dictionary_in_items(dictionary)
 
 	for title,url in dictionary.items():
+		title = title.decode('utf-8')
 		url = termcolor.colored(url,'red')
 		print title.ljust(maximum_length['title'] + 2) + url.ljust(maximum_length['url'])
 	
@@ -54,7 +55,8 @@ def print_in_textfile(dictionary):
 	output_file = open('output.txt','w')
 	output_file.write('List size is %s' %len(dictionary) + '\n' )
 	for title,url in dictionary.items():
-		#url = termcolor.colored(url,'red') Color is not working. Need to check
+		#url = termcolor.colored(url,'red') #Color is not working. Need to check
+		#title = title.decode('utf-8') #This is throwing exception here. Need to check
 		output_file.write(title.ljust(maximum_length['title'] + 2) + url.ljust(maximum_length['url']) + '\n')
 	output_file.close()
 
@@ -66,7 +68,6 @@ def print_in_html(dictionary):
 	output_file.write('<html><body>')
 	output_file.write('List size is %s' %len(dictionary)+ '<br>')
 	for title,url in dictionary.items():
-		#url = termcolor.colored(url,'red')
 		output_file.write('<a href='+'"'+url+'"'+'>'+title+'</a>'+'<br>')
 	output_file.write('</body></html>') 
 	output_file.close()
@@ -97,15 +98,12 @@ def print_in_excel(dictionary):
 	worksheet.write('B1', 'Url', bold)  # This is equal to worksheet.write(0, 1, 'Title')
 	
 	row = 1
-	try:
-		for title, url in dictionary.items():
-			if isinstance(title, str):
-				#worksheet.write_string(row,0,title)
-				worksheet.write_url(row,1,url)
-				row += 1
-		workbook.close()
-	except UnicodeDecodeError:
-		print 'UnicodeDecodeError catched'
+	for title, url in dictionary.items():
+		title = title.decode('utf-8') #This piece of code does the magic. It allows to write characters of any language. It's not working in other two options
+		worksheet.write(row,0,title)
+		worksheet.write_url(row,1,url)
+		row += 1
+	workbook.close()
 
 
 def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore_already_dictionary, keyword_flag, keyword_list, urldefault_flag):
