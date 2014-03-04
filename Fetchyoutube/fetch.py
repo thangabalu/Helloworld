@@ -55,7 +55,6 @@ def print_in_textfile(dictionary):
 	output_file = open('output.txt','w')
 	output_file.write('List size is %s' %len(dictionary) + '\n' )
 	for title,url in dictionary.items():
-		#url = termcolor.colored(url,'red') #Color is not working. Need to check
 		#title = title.decode('utf-8') #This is throwing exception here. Need to check
 		output_file.write(title.ljust(maximum_length['title'] + 2) + url.ljust(maximum_length['url']) + '\n')
 	output_file.close()
@@ -114,6 +113,7 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
 	dictionary ={}
 	url_temporary_list=[]
 	url_already_dictionary = 0
+	timer_initial = time.clock()
 
 	if urldefault_flag:
 		#This is to start the search in www.youtube.com with recommended videos.
@@ -141,11 +141,15 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
                 
 				if not ignore_already_dictionary:
 					if url_already_dictionary > url_already_dictionary_size:
+						timer_final= time.clock() - timer_initial
 						print 'The number of repetitive urls reached the limit. Stopping the search'
+						print 'Search took %d seconds' %timer_final
 						break
 					
 				if len(dictionary) > dictionary_length:
 					print 'The required size is reached. Stopping the search.................'
+					timer_final= time.clock() - timer_initial
+					print 'Search took %d seconds' %timer_final
 					break
 					
 				if href in dictionary.values():
@@ -185,7 +189,6 @@ def prepare_list(url_list,dictionary_length, url_already_dictionary_size, ignore
 
 def main():
     
-	#ToDO- Tamil letter is not coming in the extracted output
 	#Add one more parameter - Asking how long the user would like to wait for the search. If the timer expires, return the so far fetched list
 	
 	file_type = ["text", "html", "excel","cmdprompt"]
@@ -207,8 +210,6 @@ def main():
 		url_list = ['http://www.youtube.com']
 		urldefault_flag = True
 	if args.keyword:
-		for key in args.keyword:
-			print key
 		keyword_list = args.keyword
 		keyword_flag = True
 
