@@ -1,7 +1,4 @@
 #!/usr/bin/python
-# Copyright 2010 Google Inc.
-# Licensed under the Apache License, Version 2.0
-# http://www.apache.org/licenses/LICENSE-2.0
 
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
@@ -24,78 +21,85 @@ usage: copy special names [-h] [--todir TODIR] [--zip ZIP]
                           inputdirectory [inputdirectory ...]
 
 """
+class CopySpecialFiles():
 
-def copyspecialfiles(directoryname):
-    filenames = os.listdir(directoryname)            
-    absolutepath_list =[]
-    for filename in filenames:
-        path = os.path.join(directoryname,filename)
-        absolutepath = os.path.abspath(path)
-        if os.path.isfile(absolutepath):
-            match = re.match('.*__\w+__.*', filename)
-            if match:
-                absolutepath_list.append(absolutepath)
-    return absolutepath_list
+    def __init__(self):
+        self.outputDirectory = None
+        self.zipFile = None
+        self.specialFileNames = []
+
+    def getSpecialFilesNames(self, directoryname):
+        filenames = os.listdir(directoryname)
+        absolutepath_list =[]
+        for filename in filenames:
+            path = os.path.join(directoryname,filename)
+            absolutepath = os.path.abspath(path)
+            if os.path.isfile(absolutepath):
+                match = re.match('.*__\w+__.*', filename)
+                if match:
+                    absolutepath_list.append(absolutepath)
+        return absolutepath_list
+
+    def copyToDirectory(self):
+        absolutepath_todirectory = os.path.abspath(self.outputDirectory)
+        if not os.path.exists(absolutepath_todirectory):
+            os.mkdir(absolutepath_todirectory)
+            print 'created directory'
+
+        print 'copying files to the said directory'
+        for filename in self.specialFileNames:
+            shutil.copy(filename,absolutepath_todirectory)
+
+    def copyToZip(self):
+        current_working_directory = os.getcwd()
+        zipfile_path = os.path.join(current_working_directory,self.zipFile)
+        print 'zip file path is %s' %(zipfile_path)
+        if not os.path.exists(zipfile_path):
+            zip_file = zipfile.ZipFile(self.zipFile, 'w')
+            print 'created zip file'
+
+        for filename in self.specialFileNames:
+            baseName = os.path.basename(filename)
+            zip_file.write(filename, baseName)
+        zip_file.close()
+
 
 def main():
-    #usage: copy special names [-h] [--todir TODIR] [--zip ZIP]
+    #usage: copy special names [-h] [-todir TODIR] [-zip ZIP]
     #                          inputdirectory [inputdirectory ...]
-    #--todir and --zip ---> optional arguments
+    #-todir and -zip ---> optional arguments
     #inputdirectory ---> positional arguments(mandatory argument)
     
-    parser = argparse.ArgumentParser(description = 'Copy the special file names and do the appropriate action according to user input', prog ='copy special names')
-    parser.add_argument('--todir','--todirectory', help = 'Files will be copied to this directory')
-    parser.add_argument('--zip','--tozip', help = 'Copied files will be zipped into this file')
+    parser = argparse.ArgumentParser(description = 'Copy the special file names and do the appropriate action according to user input', prog ='Copy special names')
+    parser.add_argument('-todir', help = 'Files will be copied to this directory')
+    parser.add_argument('-zip', help = 'Copied files will be zipped into this file')
     parser.add_argument('inputdirectory',nargs='+', help = 'This is the input directory where the special file names will be searched')
     args = parser.parse_args()
 
+    copySpecialFiles = CopySpecialFiles()
+
+    input_directory = args.inputdirectory
+    print 'input directory argument is %s' %(input_directory)
+
+    #Pass the input directory name to a function and get the special file names.
+    for directoryname in input_directory:
+        copySpecialFiles.specialFileNames.extend(copySpecialFiles.getSpecialFilesNames(directoryname))
+
     if args.todir:
         print 'to directory argument is given - %s' %(args.todir)
-        output_directory = args.todir
-        input_directory = args.inputdirectory
-        print 'input directory argument is %s' %(input_directory)
-    
-    if args.zip:
-        zipfile_name = args.zip
-        input_directory = args.inputdirectory
+        copySpecialFiles.outputDirectory = args.todir
+        copySpecialFiles.copyToDirectory()
+
+    elif args.zip:
+        copySpecialFiles.zipFile = args.zip
         print 'Zip argument is given - %s' %(args.zip)
-        
-    if not args.todir and not args.zip:
-        input_directory = args.inputdirectory
-    
-    #Pass the directory name to a function and get the special file names.
-    copiedfilenames =[]
-    for directoryname in input_directory:
-        copiedfilenames = copyspecialfiles(directoryname)
-    
-    #if '--todir' option is given, write the special files to the given directory.
-        if args.todir:
-            absolutepath_todirectory = os.path.abspath(output_directory)
-            if not os.path.exists(absolutepath_todirectory):
-                print 'creating directory'
-                os.mkdir(absolutepath_todirectory)
-                print 'created directory'
+        copySpecialFiles.copyToZip()
 
-            for filename in copiedfilenames:
-                print 'copying files to the said directory'
-                shutil.copy(filename,absolutepath_todirectory)
+    else:
+        #If no option is given, just print it
+        for fileName in copySpecialFiles.specialFileNames:
+            print fileName
 
-    #if '--zip' option is given, zip the files under the given zip file name  
-        elif args.zip:
-            current_working_directory = os.getcwd()
-            zipfile_path = os.path.join(current_working_directory,zipfile_name)
-            print 'zip file path is %s' %(zipfile_path)
-            if not os.path.exists(zipfile_path):
-                print 'creating zip file'
-                zip_file = zipfile.ZipFile(zipfile_name, 'w')
-
-            for filename in copiedfilenames:
-                zip_file.write(filename)
-        else:
-            #If no option is given, just print it
-            print copiedfilenames
-    if args.zip:
-        zip_file.close()
 
 if __name__ == "__main__":
     main()

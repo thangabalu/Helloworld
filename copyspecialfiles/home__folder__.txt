@@ -1,3 +1,0 @@
-This is a special file.
-And due to this reason, this is a special file.
-And hence this is called special file
