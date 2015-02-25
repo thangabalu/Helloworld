@@ -15,23 +15,22 @@ import zipfile
 class copySpecialTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.inputDirectory1 = TempDirectory()
-        self.inputDirectory1.write('india__universe__.txt', 'some foo thing')
-        self.inputDirectory1.write('god__baby__.txt', 'some foo thing')
-        self.inputDirectory1.write('hi.txt', 'some foo thing')
+        self.inputDirectory = []
+        self.specialFilesNamesAbsolutePath = []
+        self.specialFileNames =[]
+        self.inputDirectoriesPath = []
+        for i in range(0,2):
+            self.inputDirectory.append(TempDirectory())
+            self.inputDirectory[i].write('india__{0}{0}{0}__.txt'.format(i), 'some foo thing')
+            self.inputDirectory[i].write('god__{0}{0}{0}__.txt'.format(i), 'some foo thing')
+            self.inputDirectory[i].write('hi.txt', 'some foo thing')
 
-        self.inputDirectory2 = TempDirectory()
-        self.inputDirectory2.write('world__universe__.txt', b'some foo thing')
-        self.inputDirectory2.write('fyra.txt', b'some foo thing')
-        self.inputDirectory2.write('hej.txt', b'some foo thing')
+            self.specialFilesNamesAbsolutePath.append('{0}/india__{1}{1}{1}__.txt'.format(self.inputDirectory[i].path, i))
+            self.specialFilesNamesAbsolutePath.append('{0}/god__{1}{1}{1}__.txt'.format(self.inputDirectory[i].path, i))
+            self.specialFileNames.append('india__{0}{0}{0}__.txt'.format(i))
+            self.specialFileNames.append('god__{0}{0}{0}__.txt'.format(i))
+            self.inputDirectoriesPath.append(self.inputDirectory[i].path)
 
-        self.specialFilesNamesAbsolutePath = ['%s/india__universe__.txt' %self.inputDirectory1.path, \
-                                  '%s/god__baby__.txt' %self.inputDirectory1.path,\
-                                  '%s/world__universe__.txt' %self.inputDirectory2.path]
-
-        self.specialFileNames = ['india__universe__.txt', 'god__baby__.txt', 'world__universe__.txt']
-
-        self.inputDirectoriesPath =[self.inputDirectory1.path, self.inputDirectory2.path]
         self.outputDirectory = TempDirectory()
         self.outputDirectory.path = self.outputDirectory.path
 
@@ -60,6 +59,6 @@ class copySpecialTestCase(unittest.TestCase):
         os.remove("dummy.zip")
 
     def tearDown(self):
-        self.inputDirectory1.cleanup()
-        self.inputDirectory2.cleanup()
+        for inputDirectory in self.inputDirectory:
+            inputDirectory.cleanup()
         self.outputDirectory.cleanup()
